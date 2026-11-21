@@ -1,0 +1,3 @@
+Coloque aqui as logos OFICIAIS das marcas (PNG com fundo transparente), enviadas pela marca ou distribuidor:
+calvin-klein.png, reserva.png, adidas.png, ogochi.png
+Depois preencha o campo "logo" em MARCAS no index.html. Ex.: logo:"marcas/reserva.png"

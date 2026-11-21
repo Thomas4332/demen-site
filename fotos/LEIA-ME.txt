@@ -1,0 +1,2 @@
+Coloque aqui as fotos dos produtos, da loja e dos clientes (JPG).
+Ex.: foto:"fotos/polo-ck.jpg" em PRODUTOS, fotoCapa:"fotos/capa.jpg" em LOJA.

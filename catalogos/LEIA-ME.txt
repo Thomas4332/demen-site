@@ -1,0 +1,2 @@
+Coloque aqui os catalogos em PDF (ex.: reserva-verao.pdf)
+e preencha o campo "pdf" em CATALOGOS no index.html. Ex.: pdf:"catalogos/reserva-verao.pdf"
