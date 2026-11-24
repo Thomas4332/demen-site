@@ -72,7 +72,7 @@ CSS = r"""
   h2 .linha-ouro{display:block;width:0;height:1px;margin-top:.9rem;background:var(--areia);transition:width 1.2s cubic-bezier(.2,.7,.2,1)}
   h2.desenhada .linha-ouro{width:64px}
   .teste-selo{position:fixed;left:200px;top:24px;z-index:60;font-size:.58rem;letter-spacing:.2em;text-transform:uppercase;background:rgba(200,180,138,.12);color:var(--areia);border:1px solid rgba(200,180,138,.35);padding:.3rem .55rem;pointer-events:none}
-  @media (max-width:860px){.teste-selo{left:165px}}
+  @media (max-width:860px){.teste-selo{display:none}}
   @media (max-width:860px){
     .hero-3d{max-width:250px;justify-self:start;grid-row:1;margin-top:4.5rem}
     .numeros{grid-template-columns:repeat(2,1fr)}
@@ -366,6 +366,8 @@ try {
 </script>
 """
 troca("</body>", JS + "</body>")
+
+exec(open(RAIZ / "conta_teste.py", encoding="utf-8").read())
 
 destino = RAIZ / "teste"
 destino.mkdir(exist_ok=True)
