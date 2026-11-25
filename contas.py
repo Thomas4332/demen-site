@@ -159,6 +159,7 @@ troca("</style>\n</head>", r"""
   .social-lgpd a{text-decoration:underline}
   .login-social .ou{display:flex;align-items:center;gap:.8rem;color:var(--cinza);font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;margin-top:.3rem}
   .login-social .ou::before,.login-social .ou::after{content:"";flex:1;height:1px;background:var(--linha)}
+  .isca{position:absolute!important;left:-9999px!important;width:1px;height:1px;overflow:hidden}
 </style>
 </head>""")
 
@@ -186,6 +187,7 @@ troca('  <section class="visite" id="visite">', '''  <section class="ajuda" id="
           <h3>Fale com a gente</h3>
           <p class="sub">Dúvida, troca, problema com pedido, sugestão ou elogio. Você recebe um número de protocolo.</p>
           <form class="form-conta" id="formSac">
+            <label class="isca" aria-hidden="true">Site<input type="text" name="site" tabindex="-1" autocomplete="off"></label>
             <div class="duas">
               <label>Nome<input type="text" name="nome" required minlength="2" maxlength="80" autocomplete="name"></label>
               <label>WhatsApp ou e-mail<input type="text" name="contato" required minlength="5" maxlength="120" autocomplete="email"></label>
@@ -229,7 +231,7 @@ troca("<!-- Assistente virtual -->", """<!-- Conta do cliente -->
     </div>
     <form class="form-conta" id="formEntrar">
       <label>E-mail<input type="email" name="email" required autocomplete="email"></label>
-      <label>Senha<input type="password" name="senha" required minlength="6" autocomplete="current-password"></label>
+      <label>Senha<input type="password" name="senha" required minlength="8" autocomplete="current-password"></label>
       <button class="btn cheio" type="submit">Entrar</button>
       <button class="link" type="button" id="esqueci">Esqueci minha senha</button>
     </form>
@@ -237,12 +239,12 @@ troca("<!-- Assistente virtual -->", """<!-- Conta do cliente -->
       <label>Nome<input type="text" name="nome" required maxlength="80" autocomplete="name"></label>
       <label>E-mail<input type="email" name="email" required autocomplete="email"></label>
       <label>WhatsApp<input type="tel" name="whatsapp" maxlength="30" placeholder="(87) 9 9999-9999" autocomplete="tel"></label>
-      <label>Senha (mín. 6 caracteres)<input type="password" name="senha" required minlength="6" autocomplete="new-password"></label>
+      <label>Senha (mín. 8 caracteres, com letras e números)<input type="password" name="senha" required minlength="8" autocomplete="new-password"></label>
       <label class="check"><input type="checkbox" name="lgpd" required> <span>Li e aceito a <a href="privacidade.html" target="_blank">Política de Privacidade</a> e autorizo a DE men a usar meus dados para atendimento.</span></label>
       <button class="btn cheio" type="submit">Criar conta</button>
     </form>
     <form class="form-conta" id="formNovaSenha" hidden>
-      <label>Nova senha<input type="password" name="senha" required minlength="6" autocomplete="new-password"></label>
+      <label>Nova senha<input type="password" name="senha" required minlength="8" autocomplete="new-password"></label>
       <button class="btn cheio" type="submit">Salvar nova senha</button>
     </form>
     <p class="aviso" id="avisoConta" role="status"></p>
@@ -333,10 +335,12 @@ const msgErro = e => {
   if (m.includes('not confirmed')) return 'Confirme seu e-mail antes de entrar (veja sua caixa de entrada).';
   if (m.includes('already registered') || m.includes('already been registered')) return 'Este e-mail já tem conta. Use "Entrar".';
   if (m.includes('duplicate') || m.includes('unique')) return 'Você já avaliou este item. Obrigado!';
-  if (m.includes('password')) return 'A senha precisa ter pelo menos 6 caracteres.';
+  if (m.includes('limite')) return 'Muitas tentativas por hoje. Tente de novo mais tarde.';
+  if (m.includes('password') || m.includes('weak')) return 'Use uma senha com pelo menos 8 caracteres, misturando letras e números.';
   if (m.includes('rate limit') || m.includes('security purposes')) return 'Muitas tentativas. Espere um pouco e tente de novo.';
   return 'Não deu certo agora. Tente de novo em instantes.';
 };
+const senhaBoa = v => v.length >= 8 && /[a-zA-Z]/.test(v) && /\d/.test(v);
 const modal = $('modalConta'), aviso = $('avisoConta');
 function mostraAba(nome) {
   document.querySelectorAll('#abasConta button').forEach(b => b.classList.toggle('ativa', b.dataset.aba === nome));
@@ -368,6 +372,9 @@ const gerarProtocolo = () => 'DM' + new Date().toISOString().slice(2, 10).replac
 $('formSac').addEventListener('submit', async e => {
   e.preventDefault(); const f = e.target, bt = f.querySelector('button[type=submit]');
   if (!f.lgpd.checked) return avisa($('avisoSac'), 'Marque a autorização para podermos responder.', true);
+  if (f.site.value) return; // robô preencheu o campo invisível: ignora
+  if (Date.now() - (window.__sacUltimo || 0) < 30000) return avisa($('avisoSac'), 'Aguarde alguns segundos para enviar outra mensagem.', true);
+  window.__sacUltimo = Date.now();
   const dados = { nome: f.nome.value.trim(), contato: f.contato.value.trim(), assunto: f.assunto.value, pedido: f.pedido.value.trim() || null, mensagem: f.mensagem.value.trim() };
   const protocolo = gerarProtocolo();
   const textoZap = `Olá, DE men! Atendimento ${protocolo}\nAssunto: ${dados.assunto}${dados.pedido ? '\nPedido: ' + dados.pedido : ''}\nNome: ${dados.nome}\n\n${dados.mensagem}`;
@@ -475,6 +482,7 @@ if (sb) {
   $('formCriar').addEventListener('submit', async e => {
     e.preventDefault(); const f = e.target, bt = f.querySelector('button[type=submit]');
     if (!f.lgpd.checked) return avisa(aviso, 'Para criar a conta, aceite a Política de Privacidade.', true);
+    if (!senhaBoa(f.senha.value)) return avisa(aviso, 'Use uma senha com pelo menos 8 caracteres, misturando letras e números.', true);
     bt.disabled = true; avisa(aviso, 'Criando sua conta…');
     const { data, error } = await sb.auth.signUp({ email: f.email.value.trim(), password: f.senha.value,
       options: { data: { nome: f.nome.value.trim(), whatsapp: f.whatsapp.value.trim() }, emailRedirectTo: voltaAqui() } });
@@ -513,6 +521,7 @@ if (sb) {
   });
   $('formNovaSenha').addEventListener('submit', async e => {
     e.preventDefault();
+    if (!senhaBoa(e.target.senha.value)) return avisa(aviso, 'Use uma senha com pelo menos 8 caracteres, misturando letras e números.', true);
     const { error } = await sb.auth.updateUser({ password: e.target.senha.value });
     if (error) return avisa(aviso, msgErro(error), true);
     avisa(aviso, 'Senha alterada! Você já está conectado.'); setTimeout(() => modal.hidden = true, 1500);
