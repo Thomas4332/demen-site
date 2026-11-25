@@ -149,6 +149,7 @@ troca("</style>\n</head>", r"""
     .sac-caixa{padding:1.4rem}
     .form-conta select,.form-conta textarea{font-size:16px}
   }
+  .login-social[hidden],.btn-social[hidden]{display:none!important}
   .login-social{display:flex;flex-direction:column;gap:.6rem;margin:.4rem 0 1rem}
   .btn-social{display:flex;align-items:center;justify-content:center;gap:.7rem;width:100%;padding:.8rem 1rem;background:var(--branco);color:#1f1f1f;border:1px solid var(--branco);font-family:var(--sans);font-size:.9rem;font-weight:500;cursor:pointer}
   .btn-social:hover{background:#fff}
