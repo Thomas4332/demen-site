@@ -1,8 +1,8 @@
-"""Gera teste/index.html (versão com efeitos e 3D) a partir do index.html principal."""
+"""Gera teste/index.html (versão com efeitos e 3D) a partir de fonte.html. Rode montar.py, que chama este arquivo."""
 from pathlib import Path
 
 RAIZ = Path(__file__).parent
-s = (RAIZ / "index.html").read_text(encoding="utf-8")
+s = (RAIZ / "fonte.html").read_text(encoding="utf-8")
 
 def troca(a, b, n=1):
     global s
@@ -371,7 +371,8 @@ try {
 """
 troca("</body>", JS + "</body>")
 
-exec(open(RAIZ / "conta_teste.py", encoding="utf-8").read())
+PREFIXO = "../"
+exec(open(RAIZ / "contas.py", encoding="utf-8").read())
 
 destino = RAIZ / "teste"
 destino.mkdir(exist_ok=True)
