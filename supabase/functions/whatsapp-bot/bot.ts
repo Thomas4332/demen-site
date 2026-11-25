@@ -6,7 +6,7 @@ export type Dados = { loja: any; produtos: Produto[] };
 export type Saida =
   | { tipo: "texto"; texto: string }
   | { tipo: "lista"; corpo: string; botao: string; secoes: { titulo: string; linhas: { id: string; titulo: string; desc?: string }[] }[] }
-  | { tipo: "botoes"; corpo: string; botoes: { id: string; titulo: string }[] }
+  | { tipo: "botoes"; corpo: string; botoes: { id: string; titulo: string }[]; imagem?: string }
   | { tipo: "imagem"; url: string; legenda: string };
 export type Entrada = { telefone: string; nome?: string; texto?: string; respostaId?: string };
 export type Deps = {
@@ -46,7 +46,8 @@ export function menu(dados: Dados, saudacao = ""): Saida {
   };
 }
 
-const rodape = (dados: Dados): Saida => ({ tipo: "botoes", corpo: "Posso ajudar em mais alguma coisa?", botoes: [
+// Texto + botões numa mensagem só (cada mensagem enviada conta na cota da Meta)
+const comBotoes = (texto: string): Saida => texto.length > 980 ? { tipo: "texto", texto } : ({ tipo: "botoes", corpo: texto, botoes: [
   { id: "catalogo", titulo: "Ver produtos" }, { id: "menu", titulo: "Menu" }, { id: "atendente", titulo: "Falar com atendente" },
 ] });
 
@@ -70,10 +71,7 @@ function produto(dados: Dados, id: string): Saida[] {
   const p = dados.produtos.find((x) => x.id === id);
   if (!p) return [{ tipo: "texto", texto: "Essa peça não está mais na vitrine. Veja as disponíveis no site: " + dados.loja.site }];
   const legenda = [`*${p.nome}*`, p.marca, p.preco ? `💰 ${p.preco}` : "💰 Preço: o atendente confirma pra você", p.tam.length ? `📏 Tamanhos: ${p.tam.join(", ")}` : "", p.desc ? "\n" + p.desc : "", `\n🔗 ${p.link}`].filter(Boolean).join("\n");
-  return [
-    { tipo: "imagem", url: p.foto, legenda: corta(legenda, 1024) },
-    { tipo: "botoes", corpo: "Gostou?", botoes: [{ id: "quero:" + p.id, titulo: "Quero este" }, { id: "cat:" + p.cat, titulo: "Ver parecidos" }, { id: "menu", titulo: "Menu" }] },
-  ];
+  return [{ tipo: "botoes", imagem: p.foto, corpo: corta(legenda, 1024), botoes: [{ id: "quero:" + p.id, titulo: "Quero este" }, { id: "cat:" + p.cat, titulo: "Ver parecidos" }, { id: "menu", titulo: "Menu" }] }];
 }
 
 function textoFrete(dados: Dados) {
@@ -138,11 +136,11 @@ export async function responder(e: Entrada, d: Deps): Promise<Resultado> {
       const p = dados.produtos.find((x) => x.id === id.slice(6));
       return { pausarHoras: 12, saidas: [{ tipo: "texto", texto: `Ótima escolha${primeiroNome ? ", " + primeiroNome : ""}! 🙌\nAnotei: *${p ? p.nome : "a peça"}*.\nMe diga o *tamanho* e se prefere *retirar na loja* ou *receber em casa* (com o CEP). Um atendente já vai confirmar estoque, valor e pagamento aqui mesmo.` }] };
     }
-    if (id === "tamanhos") return { saidas: [{ tipo: "texto", texto: `📏 *Qual meu tamanho?*\nNo site tem o *provador virtual*: você informa altura e peso e ele sugere seu tamanho de camisa, calça, bermuda e calçado.\n👉 ${dados.loja.site}#provador\n\nSe preferir, me diga sua altura, peso e a peça que te ajudo.` }, rodape(dados)] };
-    if (id === "frete") return { saidas: [{ tipo: "texto", texto: textoFrete(dados) }, rodape(dados)] };
-    if (id === "pagamento") return { saidas: [{ tipo: "texto", texto: textoPagamento(dados) }, rodape(dados)] };
-    if (id === "trocas") return { saidas: [{ tipo: "texto", texto: `🔄 *Trocas*\n${dados.loja.trocas}\nPara trocar, é só falar com um atendente.` }, rodape(dados)] };
-    if (id === "horario") return { saidas: [{ tipo: "texto", texto: `📍 *${dados.loja.endereco}*\n🕒 ${dados.loja.horario}\n\nInstagram: ${dados.loja.instagram}` }, rodape(dados)] };
+    if (id === "tamanhos") return { saidas: [comBotoes(`📏 *Qual meu tamanho?*\nNo site tem o *provador virtual*: você informa altura e peso e ele sugere seu tamanho de camisa, calça, bermuda e calçado.\n👉 ${dados.loja.site}#provador\n\nSe preferir, me diga sua altura, peso e a peça que te ajudo.`)] };
+    if (id === "frete") return { saidas: [comBotoes(textoFrete(dados))] };
+    if (id === "pagamento") return { saidas: [comBotoes(textoPagamento(dados))] };
+    if (id === "trocas") return { saidas: [comBotoes(`🔄 *Trocas*\n${dados.loja.trocas}\nPara trocar, é só falar com um atendente.`)] };
+    if (id === "horario") return { saidas: [comBotoes(`📍 *${dados.loja.endereco}*\n🕒 ${dados.loja.horario}\n\nInstagram: ${dados.loja.instagram}`)] };
     if (id === "atendente") return { pausarHoras: 12, saidas: [{ tipo: "texto", texto: `Pronto${primeiroNome ? ", " + primeiroNome : ""}! Chamei um atendente da DE men, ele responde aqui mesmo. 🕒 Horário: ${dados.loja.horario}.\n(Para voltar ao menu automático, envie *menu*.)` }] };
   }
 
@@ -162,7 +160,7 @@ export async function responder(e: Entrada, d: Deps): Promise<Resultado> {
       let r = (await d.ia(sistemaIA(dados), msgs)).trim();
       const chamar = r.includes("[ATENDENTE]");
       r = r.replace(/\s*\[ATENDENTE\]\s*/g, " ").trim();
-      if (r) return { usouIA: true, pausarHoras: chamar ? 12 : undefined, saidas: chamar ? [{ tipo: "texto", texto: r }] : [{ tipo: "texto", texto: r }, rodape(dados)] };
+      if (r) return { usouIA: true, pausarHoras: chamar ? 12 : undefined, saidas: chamar ? [{ tipo: "texto", texto: r }] : [comBotoes(r)] };
     } catch (_err) { /* cai nas palavras-chave abaixo */ }
   }
 

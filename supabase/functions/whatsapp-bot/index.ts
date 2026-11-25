@@ -48,7 +48,7 @@ function payload(para: string, s: Saida) {
   const base = { messaging_product: "whatsapp", recipient_type: "individual", to: para };
   if (s.tipo === "texto") return { ...base, type: "text", text: { body: s.texto, preview_url: true } };
   if (s.tipo === "imagem") return { ...base, type: "image", image: { link: s.url, caption: s.legenda } };
-  if (s.tipo === "botoes") return { ...base, type: "interactive", interactive: { type: "button", body: { text: s.corpo },
+  if (s.tipo === "botoes") return { ...base, type: "interactive", interactive: { type: "button", ...(s.imagem ? { header: { type: "image", image: { link: s.imagem } } } : {}), body: { text: s.corpo.slice(0, 1024) },
     action: { buttons: s.botoes.slice(0, 3).map((b) => ({ type: "reply", reply: { id: b.id.slice(0, 256), title: b.titulo.slice(0, 20) } })) } } };
   return { ...base, type: "interactive", interactive: { type: "list", body: { text: s.corpo.slice(0, 1024) },
     action: { button: s.botao.slice(0, 20), sections: s.secoes.map((sec) => ({ title: sec.titulo.slice(0, 24),
@@ -79,8 +79,7 @@ async function processar(msg: any, contato: any) {
 
   if (!["text", "interactive", "button"].includes(msg.type)) {
     // foto, áudio, figurinha… o robô não entende: oferece o menu
-    await enviar(tel, [{ tipo: "texto", texto: "Recebi! Por aqui eu entendo só texto 🙂 Se quiser, chame um atendente ou escolha uma opção:" }]);
-    await enviar(tel, [menu(await dados())]);
+    await enviar(tel, [menu(await dados(), "Recebi! Por aqui eu entendo só texto 🙂")]);
     return;
   }
 
