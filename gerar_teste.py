@@ -170,6 +170,7 @@ JS = r"""
   let lenis = null;
   if (window.Lenis && !reduz && !toque) {
     lenis = new Lenis({ lerp: .09, smoothWheel: true });
+    new MutationObserver(() => document.body.classList.contains('travado') ? lenis.stop() : lenis.start()).observe(document.body, { attributes: true, attributeFilter: ['class'] });
     if (window.ScrollTrigger) { lenis.on('scroll', ScrollTrigger.update); gsap.ticker.add(t => lenis.raf(t * 1000)); gsap.ticker.lagSmoothing(0); }
     else { const raf = t => { lenis.raf(t); requestAnimationFrame(raf); }; requestAnimationFrame(raf); }
     document.addEventListener('click', e => {
@@ -265,10 +266,13 @@ JS = r"""
     // marcas e catálogos
     gsap.fromTo('#marcasGrade', { clipPath: 'inset(0 0 100% 0)' }, { clipPath: 'inset(0 0 0% 0)', duration: 1.2, ease: 'power4.out', scrollTrigger: { trigger: '#marcasGrade', start: 'top 88%' } });
     gsap.fromTo('.marca-cel > *', { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: .9, stagger: .08, delay: .3, ease: 'power3.out', clearProps: 'opacity,transform', scrollTrigger: { trigger: '#marcasGrade', start: 'top 88%' } });
-    document.querySelectorAll('.cat-card,.galeria .foto').forEach(e => e.classList.remove('revelar'));
+    document.querySelectorAll('.cat-card').forEach(e => e.classList.remove('revelar'));
     gsap.fromTo('.cat-card', { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 1, stagger: .1, ease: 'power3.out', clearProps: 'opacity,transform', scrollTrigger: { trigger: '#catGrade', start: 'top 88%' } });
     gsap.fromTo('.numeros > div > *', { opacity: 0, y: 25 }, { opacity: 1, y: 0, duration: .9, stagger: .06, ease: 'power3.out', clearProps: 'opacity,transform', scrollTrigger: { trigger: '.numeros', start: 'top 90%' } });
-    gsap.fromTo('.galeria .foto', { opacity: 0, scale: .85 }, { opacity: 1, scale: 1, duration: .9, stagger: .07, ease: 'power3.out', clearProps: 'opacity,transform', scrollTrigger: { trigger: '#galeria', start: 'top 88%' } });
+    [['.look', '#looksGrade'], ['#lojaFotos .foto', '#lojaFotos'], ['.aval', '#avalGrade'], ['#instaGrade > *', '#instaGrade'], ['.provas > div', '.provas']].forEach(([alvo, gatilho]) => {
+      if (!document.querySelector(alvo)) return;
+      gsap.fromTo(alvo, { opacity: 0, y: 50, scale: .96 }, { opacity: 1, y: 0, scale: 1, duration: .9, stagger: .08, ease: 'power3.out', clearProps: 'opacity,transform', scrollTrigger: { trigger: gatilho, start: 'top 88%' } });
+    });
 
     // cards da vitrine: revelam a foto de baixo pra cima (inclusive depois de filtrar)
     const grade = document.getElementById('grade');

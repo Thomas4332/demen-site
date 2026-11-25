@@ -37,8 +37,8 @@ troca('    <span>Revenda autorizada • 100% originais</span>\n  </div>\n</foote
 # --- coração de favorito em cada produto ---
 troca('${p.foto2 ? `<img class="foto2" src="${p.foto2}" alt="${p.nome} — outro ângulo" loading="lazy">` : ""}</div>',
       '${p.foto2 ? `<img class="foto2" src="${p.foto2}" alt="${p.nome} — outro ângulo" loading="lazy">` : ""}<button class="fav" data-fav="${p.nome}" aria-label="Salvar nos favoritos"><i class="fa-regular fa-heart"></i></button></div>')
-troca('<a class="btn" target="_blank" rel="noopener"\n             href="${zap(`Olá, DE men! Tenho interesse em: ${p.nome} (${p.marca}). Tem disponível?`)}">Quero este</a>',
-      '<a class="btn js-quero" data-produto="${p.nome}" data-marca="${p.marca}" target="_blank" rel="noopener"\n             href="${zap(`Olá, DE men! Tenho interesse em: ${p.nome} (${p.marca}). Tem disponível?`)}">Quero este</a>')
+troca('<a class="btn" target="_blank" rel="noopener"\n             href="${zap(`Olá, DE men! Tenho interesse em: ${p.nome} (${p.marca}). Tem disponível?`)}">',
+      '<a class="btn js-quero" data-produto="${p.nome}" data-marca="${p.marca}" target="_blank" rel="noopener"\n             href="${zap(`Olá, DE men! Tenho interesse em: ${p.nome} (${p.marca}). Tem disponível?`)}">')
 
 # --- estilos ---
 troca("</style>\n</head>", r"""
