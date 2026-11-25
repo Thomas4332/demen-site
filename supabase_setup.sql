@@ -95,7 +95,9 @@ create or replace function public.criar_perfil() returns trigger
 language plpgsql security definer set search_path = '' as $$
 begin
   insert into public.perfis (id, nome, whatsapp)
-  values (new.id, left(new.raw_user_meta_data->>'nome', 80), left(new.raw_user_meta_data->>'whatsapp', 20))
+  values (new.id,
+          left(coalesce(new.raw_user_meta_data->>'nome', new.raw_user_meta_data->>'full_name', new.raw_user_meta_data->>'name'), 80),
+          left(new.raw_user_meta_data->>'whatsapp', 20))
   on conflict (id) do nothing;
   return new;
 end $$;

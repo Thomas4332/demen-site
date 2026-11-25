@@ -372,7 +372,9 @@ try {
 troca("</body>", JS + "</body>")
 
 PREFIXO = "../"
-exec(open(RAIZ / "contas.py", encoding="utf-8").read())
+import os
+if not os.environ.get("SEM_CONTAS"):
+    exec(open(RAIZ / "contas.py", encoding="utf-8").read())
 
 destino = RAIZ / "teste"
 destino.mkdir(exist_ok=True)

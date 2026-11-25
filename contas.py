@@ -149,6 +149,15 @@ troca("</style>\n</head>", r"""
     .sac-caixa{padding:1.4rem}
     .form-conta select,.form-conta textarea{font-size:16px}
   }
+  .login-social{display:flex;flex-direction:column;gap:.6rem;margin:.4rem 0 1rem}
+  .btn-social{display:flex;align-items:center;justify-content:center;gap:.7rem;width:100%;padding:.8rem 1rem;background:var(--branco);color:#1f1f1f;border:1px solid var(--branco);font-family:var(--sans);font-size:.9rem;font-weight:500;cursor:pointer}
+  .btn-social:hover{background:#fff}
+  .btn-social svg{width:20px;height:20px;flex:none}
+  .btn-social[disabled]{opacity:.6;cursor:wait}
+  .social-lgpd{font-size:.72rem;color:var(--cinza);text-align:center}
+  .social-lgpd a{text-decoration:underline}
+  .login-social .ou{display:flex;align-items:center;gap:.8rem;color:var(--cinza);font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;margin-top:.3rem}
+  .login-social .ou::before,.login-social .ou::after{content:"";flex:1;height:1px;background:var(--linha)}
 </style>
 </head>""")
 
@@ -207,6 +216,12 @@ troca("<!-- Assistente virtual -->", """<!-- Conta do cliente -->
   <div class="modal-caixa" data-lenis-prevent role="dialog" aria-modal="true" aria-label="Entrar ou criar conta">
     <button class="modal-x" data-fechar aria-label="Fechar">×</button>
     <img src="__P__img/monograma.svg" alt="DE men" class="modal-logo">
+    <div class="login-social" id="loginSocial" hidden>
+      <button type="button" class="btn-social" data-provedor="google" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.4h6.5a5.6 5.6 0 0 1-2.4 3.6v3h3.9c2.3-2.1 3.5-5.2 3.5-8.7z"/><path fill="#34A853" d="M12 24c3.2 0 6-1.1 8-2.9l-3.9-3c-1.1.7-2.5 1.2-4.1 1.2-3.1 0-5.8-2.1-6.7-5H1.3v3.1A12 12 0 0 0 12 24z"/><path fill="#FBBC05" d="M5.3 14.3a7.2 7.2 0 0 1 0-4.6V6.6H1.3a12 12 0 0 0 0 10.8l4-3.1z"/><path fill="#EA4335" d="M12 4.8c1.8 0 3.3.6 4.6 1.8l3.4-3.4A12 12 0 0 0 1.3 6.6l4 3.1c.9-2.9 3.6-4.9 6.7-4.9z"/></svg>Continuar com Google</button>
+      <button type="button" class="btn-social" data-provedor="facebook" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#1877F2" d="M24 12a12 12 0 1 0-13.9 11.9v-8.4H7.1V12h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.4l-.5 3.5h-2.9v8.4A12 12 0 0 0 24 12z"/></svg>Continuar com Facebook</button>
+      <p class="social-lgpd">Ao continuar, você aceita a <a href="__P__privacidade.html" target="_blank">Política de Privacidade</a>.</p>
+      <div class="ou"><span>ou com e-mail</span></div>
+    </div>
     <div class="abas" id="abasConta">
       <button data-aba="entrar" class="ativa">Entrar</button>
       <button data-aba="criar">Criar conta</button>
@@ -467,6 +482,19 @@ if (sb) {
     ras('conta', 'criada');
     if (!data.session) { f.reset(); return avisa(aviso, 'Conta criada! Enviamos um e-mail de confirmação. Clique no link e depois entre aqui.'); }
     modal.hidden = true;
+  });
+  // Login com Google e Facebook: os botões só aparecem se o provedor estiver ligado no Supabase
+  fetch(cfg.url + '/auth/v1/settings', { headers: { apikey: cfg.chave } }).then(r => r.ok ? r.json() : null).then(c => {
+    const ext = (c && c.external) || {}; let algum = false;
+    document.querySelectorAll('[data-provedor]').forEach(b => { const on = !!ext[b.dataset.provedor]; b.hidden = !on; algum = algum || on; });
+    $('loginSocial').hidden = !algum;
+  }).catch(() => {});
+  $('loginSocial').addEventListener('click', async e => {
+    const b = e.target.closest('[data-provedor]'); if (!b) return;
+    b.disabled = true; avisa(aviso, 'Abrindo ' + (b.dataset.provedor === 'google' ? 'o Google' : 'o Facebook') + '…');
+    ras('conta', 'login-' + b.dataset.provedor);
+    const { error } = await sb.auth.signInWithOAuth({ provider: b.dataset.provedor, options: { redirectTo: voltaAqui() } });
+    if (error) { b.disabled = false; avisa(aviso, 'Não foi possível entrar agora. Tente pelo e-mail.', true); }
   });
   $('formEntrar').addEventListener('submit', async e => {
     e.preventDefault(); const f = e.target, bt = f.querySelector('button[type=submit]');
