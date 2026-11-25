@@ -57,8 +57,8 @@ troca("</style>\n</head>", r"""
   .fav:hover{transform:scale(1.1)}
   .fav.ativo{color:#e0566a;background:rgba(255,255,255,.92)}
   .fav.ativo i{font-weight:900}
-  .modal{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.72);backdrop-filter:blur(6px);display:grid;place-items:center;padding:1rem}
-  .modal[hidden],.area[hidden],.form-conta[hidden],.abas[hidden],[data-painel][hidden]{display:none !important}
+  .modal-conta{position:fixed;inset:0;z-index:400;background:rgba(0,0,0,.72);backdrop-filter:blur(6px);display:grid;place-items:center;padding:1rem}
+  .modal-conta[hidden],.area[hidden],.form-conta[hidden],.abas[hidden],[data-painel][hidden]{display:none !important}
   .modal-caixa{position:relative;width:min(420px,100%);max-height:92vh;overflow:auto;background:var(--grafite);border:1px solid var(--linha);padding:2.2rem 1.8rem 1.6rem;animation:sobe .35s cubic-bezier(.2,.7,.2,1)}
   @keyframes sobe{from{opacity:0;transform:translateY(24px)}}
   .modal-x{position:absolute;top:10px;right:12px;background:none;border:0;color:var(--cinza);font-size:1.6rem;cursor:pointer}
@@ -70,6 +70,7 @@ troca("</style>\n</head>", r"""
   .form-conta label{font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--cinza);display:flex;flex-direction:column;gap:.35rem}
   .form-conta input[type=text],.form-conta input[type=email],.form-conta input[type=password],.form-conta input[type=tel]{background:var(--preto);border:1px solid var(--linha);color:var(--branco);padding:.8rem .9rem;font-family:var(--sans);font-size:.95rem;outline:none;text-transform:none;letter-spacing:0}
   .form-conta input:focus{border-color:var(--areia)}
+  @media (max-width:860px){.form-conta input{font-size:16px!important}}
   .form-conta input[readonly]{opacity:.6}
   .form-conta .check{flex-direction:row;align-items:flex-start;gap:.6rem;text-transform:none;letter-spacing:0;font-size:.82rem;line-height:1.4}
   .form-conta .check a{color:var(--areia);border-bottom:1px solid var(--areia)}
@@ -94,7 +95,8 @@ troca("</style>\n</head>", r"""
   @media (max-width:860px){
     .btn-conta span{display:none}
     .btn-conta{width:40px;padding:0;justify-content:center;border-radius:50%}
-    .topo-acoes .ico{width:36px;height:36px}
+    .topo-acoes .ico{display:none}
+    .btn-conta{width:38px;height:38px;border-color:var(--linha)}
     .topo-acoes{gap:.3rem;margin-left:auto;margin-right:.6rem}
     .rodape-dir{align-items:flex-start}.redes{justify-content:flex-start}
   }
@@ -103,7 +105,7 @@ troca("</style>\n</head>", r"""
 
 # --- modal de login/cadastro e área do cliente ---
 troca("<!-- Assistente virtual -->", """<!-- Conta do cliente -->
-<div class="modal" id="modalConta" hidden>
+<div class="modal-conta" id="modalConta" hidden>
   <div class="modal-caixa" data-lenis-prevent role="dialog" aria-modal="true" aria-label="Entrar ou criar conta">
     <button class="modal-x" data-fechar aria-label="Fechar">×</button>
     <img src="../img/monograma.svg" alt="DE men" class="modal-logo">
