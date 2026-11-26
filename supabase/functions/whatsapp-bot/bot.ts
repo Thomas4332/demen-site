@@ -1,7 +1,8 @@
 // Lógica do robô de WhatsApp da DE men: menu com botões + IA para perguntas livres.
 // Não fala direto com WhatsApp/banco: recebe funções em "deps" (facilita testar).
 
-export type Produto = { id: string; nome: string; marca: string; cat: string; sub: string; preco: string; tam: string[]; selo: string; desc: string; foto: string; link: string };
+export type Produto = { id: string; nome: string; marca: string; cat: string; sub: string; preco: string; tam: string[]; selo: string; desc: string; foto: string; link: string; esgotados?: string[]; semEstoque?: boolean };
+const tamTxt = (p: Produto) => p.tam.map((t) => (p.esgotados || []).includes(t) ? `${t} (esgotado)` : t).join(", ");
 export type Dados = { loja: any; produtos: Produto[] };
 export type Saida =
   | { tipo: "texto"; texto: string }
@@ -63,15 +64,15 @@ function listaProdutos(dados: Dados, titulo: string, prods: Produto[]): Saida {
   if (!prods.length) return { tipo: "texto", texto: "Não encontrei peças nessa categoria agora. Veja tudo no site: " + dados.loja.site };
   return { tipo: "lista", corpo: `*${titulo}* — escolha uma peça para ver a foto e os tamanhos:`, botao: "Ver peças", secoes: [{
     titulo: corta(titulo, 24),
-    linhas: prods.slice(0, 10).map((p) => ({ id: "p:" + p.id, titulo: corta(p.nome, 24), desc: corta(`${p.marca}${p.preco ? " • " + p.preco : ""}${p.tam.length ? " • " + p.tam.join(", ") : ""}`, 72) })),
+    linhas: prods.slice(0, 10).map((p) => ({ id: "p:" + p.id, titulo: corta(p.nome, 24), desc: corta(`${p.marca}${p.preco ? " • " + p.preco : ""}${p.semEstoque ? " • ESGOTADO" : p.tam.length ? " • " + tamTxt(p) : ""}`, 72) })),
   }] };
 }
 
 function produto(dados: Dados, id: string): Saida[] {
   const p = dados.produtos.find((x) => x.id === id);
   if (!p) return [{ tipo: "texto", texto: "Essa peça não está mais na vitrine. Veja as disponíveis no site: " + dados.loja.site }];
-  const legenda = [`*${p.nome}*`, p.marca, p.preco ? `💰 ${p.preco}` : "💰 Preço: o atendente confirma pra você", p.tam.length ? `📏 Tamanhos: ${p.tam.join(", ")}` : "", p.desc ? "\n" + p.desc : "", `\n🔗 ${p.link}`].filter(Boolean).join("\n");
-  return [{ tipo: "botoes", imagem: p.foto, corpo: corta(legenda, 1024), botoes: [{ id: "quero:" + p.id, titulo: "Quero este" }, { id: "cat:" + p.cat, titulo: "Ver parecidos" }, { id: "menu", titulo: "Menu" }] }];
+  const legenda = [`*${p.nome}*`, p.marca, p.preco ? `💰 ${p.preco}` : "💰 Preço: o atendente confirma pra você", p.semEstoque ? "⛔ Esgotado no momento" : p.tam.length ? `📏 Tamanhos: ${tamTxt(p)}` : "", p.desc ? "\n" + p.desc : "", `\n🔗 ${p.link}`].filter(Boolean).join("\n");
+  return [{ tipo: "botoes", imagem: p.foto, corpo: corta(legenda, 1024), botoes: [{ id: "quero:" + p.id, titulo: p.semEstoque ? "Avise-me" : "Quero este" }, { id: "cat:" + p.cat, titulo: "Ver parecidos" }, { id: "menu", titulo: "Menu" }] }];
 }
 
 function textoFrete(dados: Dados) {
@@ -89,13 +90,13 @@ function textoPagamento(dados: Dados) {
 }
 
 export function sistemaIA(dados: Dados) {
-  const prods = dados.produtos.map((p) => `- ${p.nome} | ${p.marca} | ${p.cat}${p.sub ? "/" + p.sub : ""} | preço: ${p.preco || "não informado"} | tamanhos: ${p.tam.join(", ") || "único"}${p.selo === "novo" ? " | novidade" : ""} | ${p.link}`).join("\n");
+  const prods = dados.produtos.map((p) => `- ${p.nome} | ${p.marca} | ${p.cat}${p.sub ? "/" + p.sub : ""} | preço: ${p.preco || "não informado"} | tamanhos: ${tamTxt(p) || "único"}${p.semEstoque ? " | ESGOTADO" : ""}${p.selo === "novo" ? " | novidade" : ""} | ${p.link}`).join("\n");
   return `Você é o assistente virtual da DE men, loja de moda masculina premium em Sertânia-PE (revenda autorizada Calvin Klein, Reserva, Adidas e Ogochi), respondendo clientes no WhatsApp.
 
 Regras:
 - Responda em português do Brasil, curto (até 5 linhas), simpático e direto, no estilo WhatsApp. Pode usar *negrito* e no máximo 1 emoji.
 - Use SOMENTE as informações abaixo. Nunca invente preço, estoque, desconto, prazo, cor ou tamanho que não estejam listados.
-- Se o preço for "não informado", diga que o atendente confirma o valor. A lista mostra os tamanhos que a peça tem, não o estoque: para disponibilidade, diga que o atendente confirma.
+- Se o preço for "não informado", diga que o atendente confirma o valor. Tamanhos marcados "(esgotado)" ou peças ESGOTADO não estão disponíveis: ofereça o aviso quando chegar (um atendente anota). Para os outros tamanhos, o atendente confirma a disponibilidade.
 - Ao citar uma peça, mande o link dela.
 - Se o cliente quiser fechar compra, reclamar, trocar, negociar, ou se a pergunta não puder ser respondida com estas informações, diga que vai chamar um atendente e termine a resposta com a marca [ATENDENTE].
 - Não fale de assuntos fora da loja; traga a conversa de volta para as peças com educação.
@@ -134,6 +135,7 @@ export async function responder(e: Entrada, d: Deps): Promise<Resultado> {
     if (id.startsWith("p:")) return { saidas: produto(dados, id.slice(2)) };
     if (id.startsWith("quero:")) {
       const p = dados.produtos.find((x) => x.id === id.slice(6));
+      if (p?.semEstoque) return { pausarHoras: 12, saidas: [{ tipo: "texto", texto: `Anotado${primeiroNome ? ", " + primeiroNome : ""}! 🔔\nA *${p.nome}* está esgotada agora. Me diga o *tamanho* que você quer e a loja te avisa aqui assim que chegar.` }] };
       return { pausarHoras: 12, saidas: [{ tipo: "texto", texto: `Ótima escolha${primeiroNome ? ", " + primeiroNome : ""}! 🙌\nAnotei: *${p ? p.nome : "a peça"}*.\nMe diga o *tamanho* e se prefere *retirar na loja* ou *receber em casa* (com o CEP). Um atendente já vai confirmar estoque, valor e pagamento aqui mesmo.` }] };
     }
     if (id === "tamanhos") return { saidas: [comBotoes(`📏 *Qual meu tamanho?*\nNo site tem o *provador virtual*: você informa altura e peso e ele sugere seu tamanho de camisa, calça, bermuda e calçado.\n👉 ${dados.loja.site}#provador\n\nSe preferir, me diga sua altura, peso e a peça que te ajudo.`)] };

@@ -104,3 +104,27 @@ end $$;
 revoke execute on function public.criar_perfil() from public, anon, authenticated;
 drop trigger if exists ao_criar_usuario on auth.users;
 create trigger ao_criar_usuario after insert on auth.users for each row execute function public.criar_perfil();
+
+-- ===== Avise-me quando chegar =====
+create table if not exists public.avisos (
+  id bigint generated always as identity primary key,
+  produto text not null check (char_length(produto) <= 160), produto_nome text check (char_length(produto_nome) <= 160),
+  tamanho text check (char_length(tamanho) <= 10), nome text check (char_length(nome) <= 80),
+  contato text not null check (char_length(contato) between 5 and 120),
+  user_id uuid default auth.uid() references auth.users(id) on delete set null,
+  avisado boolean not null default false, criado_em timestamptz not null default now()
+);
+alter table public.avisos enable row level security;
+create policy "avisos - pedir" on public.avisos for insert to anon, authenticated with check (avisado = false and (user_id is null or user_id = (select auth.uid())));
+create policy "avisos proprios - ler" on public.avisos for select to authenticated using ((select auth.uid()) = user_id);
+-- (gatilho limitar_avisos: 15 por contato/dia e 500/dia no total; execução revogada do público)
+
+-- ===== Pedidos pagos online (só a função "pagamento" grava; a loja vê no painel) =====
+create table if not exists public.pedidos (
+  id bigint generated always as identity primary key, codigo text not null unique, itens jsonb not null,
+  subtotal numeric(10,2) not null, frete numeric(10,2) not null default 0, frete_desc text, total numeric(10,2) not null,
+  cliente_nome text, cliente_contato text, cep text, endereco text,
+  status text not null default 'aguardando_pagamento', mp_preferencia text, mp_pagamento text,
+  criado_em timestamptz not null default now(), atualizado_em timestamptz not null default now()
+);
+alter table public.pedidos enable row level security;

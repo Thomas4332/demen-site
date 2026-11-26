@@ -328,7 +328,7 @@ const dataBR = d => new Date(d).toLocaleDateString('pt-BR');
 const ras = (a, b) => window.rastrear && window.rastrear(a, b);
 let sb = null, usuario = null, perfil = null;
 if (cfg.url && cfg.chave) {
-  try { const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'); sb = createClient(cfg.url, cfg.chave); }
+  try { const { createClient } = await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm'); sb = createClient(cfg.url, cfg.chave); window.demenSB = sb; }
   catch (e) { console.warn('Supabase não carregou', e); }
 }
 const msgErro = e => {

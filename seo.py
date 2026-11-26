@@ -141,7 +141,7 @@ nav.migalha{font-size:.75rem;color:var(--cinza);margin:1.6rem 0 1.2rem}nav.migal
 h1{font-family:var(--serif);font-weight:500;font-size:clamp(2.1rem,4vw,3rem);line-height:1.1;margin:.4rem 0 .8rem}
 h2{font-family:var(--serif);font-weight:500;font-size:1.6rem;margin:2.4rem 0 1rem}
 .preco{font-size:1.25rem;color:var(--areia);margin-bottom:1rem}.desc{color:#cfcac2;margin:1rem 0}
-.tams{display:flex;flex-wrap:wrap;gap:.4rem;margin:.6rem 0 1.4rem}.tams span{border:1px solid var(--linha);padding:.35rem .7rem;font-size:.82rem}
+.tams{display:flex;flex-wrap:wrap;gap:.4rem;margin:.6rem 0 1.4rem}.tams .esg{text-decoration:line-through;opacity:.45}.esgotado{color:var(--areia);margin:-.6rem 0 1.2rem}.esgotado a{text-decoration:underline}.tams span{border:1px solid var(--linha);padding:.35rem .7rem;font-size:.82rem}
 .btn{display:inline-flex;justify-content:center;align-items:center;gap:.5rem;padding:.95rem 1.4rem;border:1px solid var(--branco);font-size:.78rem;letter-spacing:.16em;text-transform:uppercase;font-weight:500}
 .btn.cheio{background:var(--branco);color:var(--preto)}.acoes{display:flex;flex-wrap:wrap;gap:.6rem}
 .info-lista{margin-top:1.6rem;border-top:1px solid var(--linha)}.info-lista p{border-bottom:1px solid var(--linha);padding:.7rem 0;font-size:.88rem;color:#cfcac2}.info-lista b{color:var(--branco);font-weight:500}
@@ -169,7 +169,8 @@ def pagina_produto(p, dados, csp, ga_head):
     prod_ld = {"@type": "Product", "@id": url + "#produto", "name": p["nome"], "description": descricao, "image": fotos_jpg, "sku": p["id"],
                "brand": {"@type": "Brand", "name": p["marca"]}, "category": p["cat"] + (" > " + p["sub"] if p["sub"] else ""), "url": url}
     if pn:
-        prod_ld["offers"] = {"@type": "Offer", "price": pn, "priceCurrency": "BRL", "url": url, "seller": {"@id": SITE + "#loja"}}
+        prod_ld["offers"] = {"@type": "Offer", "price": pn, "priceCurrency": "BRL", "url": url, "seller": {"@id": SITE + "#loja"},
+                             **({"availability": "https://schema.org/OutOfStock"} if p.get("semEstoque") else {})}
     trilha = {"@type": "BreadcrumbList", "itemListElement": [
         {"@type": "ListItem", "position": 1, "name": "Início", "item": SITE},
         {"@type": "ListItem", "position": 2, "name": p["cat"], "item": SITE + "#vitrine"},
@@ -212,7 +213,8 @@ def pagina_produto(p, dados, csp, ga_head):
       <h1>{esc(p['nome'])}</h1>
       <div class="preco">{esc(p['preco'] or 'Preço sob consulta no WhatsApp')}</div>
       {('<p class="desc">' + esc(p['desc']) + '</p>') if p['desc'] else ''}
-      {('<h2 style="font-size:1rem;font-family:var(--sans);margin:1rem 0 .2rem;font-weight:500">Tamanhos</h2><div class="tams">' + ''.join(f'<span>{esc(t)}</span>' for t in p['tam']) + '</div>') if p['tam'] else ''}
+      {('<h2 style="font-size:1rem;font-family:var(--sans);margin:1rem 0 .2rem;font-weight:500">Tamanhos</h2><div class="tams">' + ''.join(f'<span class="esg" title="Esgotado">{esc(t)}</span>' if t in p.get('esgotados', []) else f'<span>{esc(t)}</span>' for t in p['tam']) + '</div>') if p['tam'] else ''}
+      {'<p class="esgotado">Esgotado no momento. <a href="../#p/' + p['id'] + '">Peça para ser avisado quando chegar →</a></p>' if p.get('semEstoque') else ''}
       <div class="acoes"><a class="btn cheio" href="{esc(pedido)}" target="_blank" rel="noopener">Pedir no WhatsApp</a><a class="btn" href="../#p/{p['id']}">Ver na loja online</a></div>
       <div class="info-lista">
         <p><b>Original:</b> revenda autorizada {esc(p['marca'])}.</p>

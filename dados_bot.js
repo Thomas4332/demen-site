@@ -14,6 +14,8 @@ const out = {
   produtos: PRODUTOS.filter(p => p.foto).map(p => { const id = slug(p.marca + ' ' + p.nome);
     return { id, nome: p.nome, marca: p.marca, cat: p.cat, sub: p.sub || '', preco: p.preco || '', tam: p.tam || [], selo: p.selo || '', desc: p.desc || '',
              foto: site + p.foto, link: site + 'produto/' + id + '.html',
+             esgotados: p.esgotado === true ? (p.tam || []) : Array.isArray(p.esgotado) ? p.esgotado.map(String) : [],
+             semEstoque: p.esgotado === true || ((p.tam || []).length > 0 && Array.isArray(p.esgotado) && p.tam.every(t => p.esgotado.map(String).includes(t))),
              fotosRel: [p.foto, p.foto2, ...(p.fotos || [])].filter(Boolean).filter((f, i, a) => a.indexOf(f) === i) }; })
 };
 fs.writeFileSync(path.join(__dirname, 'produtos.json'), JSON.stringify(out, null, 1));
