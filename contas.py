@@ -160,6 +160,8 @@ troca("</style>\n</head>", r"""
   .login-social .ou{display:flex;align-items:center;gap:.8rem;color:var(--cinza);font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;margin-top:.3rem}
   .login-social .ou::before,.login-social .ou::after{content:"";flex:1;height:1px;background:var(--linha)}
   .isca{position:absolute!important;left:-9999px!important;width:1px;height:1px;overflow:hidden}
+  .sac-caixa,.ajuda .wrap>*{min-width:0;max-width:100%}
+  .form-conta .duas>*{min-width:0}
 </style>
 </head>""")
 
