@@ -1,0 +1,73 @@
+{
+ "runId": "demen-figma-1",
+ "fileKey": "Y1F5pFVasZRcERYnxSfmn7",
+ "sessionId": "8b6ced40-41d7-4eb1-a101-73a135baec79",
+ "pages": {
+  "Apresentação": "0:1",
+  "Guia visual": "13:2"
+ },
+ "collection": "VariableCollectionId:13:3",
+ "mode": "13:0",
+ "variables": {
+  "cor/fundo/base": "VariableID:13:4",
+  "cor/fundo/superficie": "VariableID:13:5",
+  "cor/fundo/elevado": "VariableID:13:6",
+  "cor/fundo/claro": "VariableID:13:7",
+  "cor/fundo/whatsapp": "VariableID:13:8",
+  "cor/borda/padrao": "VariableID:13:9",
+  "cor/borda/forte": "VariableID:13:10",
+  "cor/borda/destaque": "VariableID:13:11",
+  "cor/texto/principal": "VariableID:13:12",
+  "cor/texto/suave": "VariableID:13:13",
+  "cor/texto/destaque": "VariableID:13:14",
+  "cor/texto/inverso": "VariableID:13:15",
+  "cor/destaque": "VariableID:13:16",
+  "espaco/xs": "VariableID:13:17",
+  "espaco/sm": "VariableID:13:18",
+  "espaco/md": "VariableID:13:19",
+  "espaco/lg": "VariableID:13:20",
+  "espaco/xl": "VariableID:13:21",
+  "espaco/2xl": "VariableID:13:22",
+  "espaco/3xl": "VariableID:13:23",
+  "espaco/4xl": "VariableID:13:24",
+  "raio/nenhum": "VariableID:13:25"
+ },
+ "textStyles": {
+  "Título/Display": "S:80de9cdc8a95a1c5e002042e412ea53b65f2c5df,",
+  "Título/H2": "S:653dab9b01e4aec448aca1a2594f06e429ed2019,",
+  "Título/H3": "S:47d26ccfe4fa26d253e518ac8702fb2196cf269b,",
+  "Título/Produto": "S:623170bf75aefc92842c76dfd85319004c8c8512,",
+  "Corpo/Base": "S:34612d6135fb6c8e16a7ee9a06b76a21fb00318e,",
+  "Corpo/Pequeno": "S:938a58d96b1c468bc98c0338695cfefea47d7312,",
+  "Corpo/Destaque": "S:a4adb8ef93580aba5d516504952694f2373992e8,",
+  "Rótulo/Eyebrow": "S:0c68ee6f3603f00e8dde5878a1becf89d7f4bd7a,",
+  "Rótulo/Botão": "S:7dac8faa1dc1da111ace214ba35954ce75e1ce1b,",
+  "Rótulo/Marca": "S:ada8a2b668feef3bfbc089a3f17ab8e99c223b22,"
+ },
+ "completedSteps": [
+  "foundations",
+  "components",
+  "specimen",
+  "apresentacao_telas_1a4"
+ ],
+ "components": {
+  "Botao": "14:9",
+  "Selo": "14:16",
+  "Tamanho": "14:23",
+  "Campo": "14:24",
+  "Opcao": "14:38",
+  "Card": "14:39",
+  "board": "16:7",
+  "fonte": "14:2"
+ },
+ "apresentacao": {
+  "secaoNovidades": "17:2",
+  "pendente": [
+   "telas 5-8 (SAC, Robo WhatsApp, Google, Pedido aprovado)",
+   "mover 1:57 e 1:78 para baixo da 17:2",
+   "beneficios atualizados",
+   "secao Proposta com 3 pacotes (valores em branco)",
+   "redimensionar 1:10"
+  ]
+ }
+}
