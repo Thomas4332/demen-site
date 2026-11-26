@@ -41,6 +41,7 @@
   img{max-width:100%;display:block}
   .wrap{width:min(1180px,92%);margin:0 auto}
   .eyebrow{font-size:.72rem;letter-spacing:.3em;text-transform:uppercase;color:var(--areia);font-weight:500}
+  .h1-local{display:block;font-family:var(--sans);line-height:1.6;margin-bottom:.9rem}
   h1,h2,h3{font-family:var(--serif);font-weight:500;line-height:1.1}
   h2{font-size:clamp(2rem,4vw,3rem);margin:.4rem 0 1rem}
   .sub{color:var(--cinza);max-width:52ch}
@@ -278,7 +279,7 @@
   .pp-miniaturas img{width:100%;height:100%;object-fit:cover}
   .pp-info{display:flex;flex-direction:column;gap:1rem;align-self:start;position:sticky;top:90px}
   .pp-info .marca{font-size:.72rem;letter-spacing:.26em;text-transform:uppercase;color:var(--areia)}
-  .pp-info h1{font-size:clamp(2.2rem,4vw,3.2rem)}
+  .pp-info h1,.pp-info .pp-nome{font-size:clamp(2.2rem,4vw,3.2rem);margin:0}
   .pp-info .preco{font-size:1.1rem;color:#cfcac2}
   .pp-info .desc{color:#bdb8b0;font-size:.95rem}
   .rotulo{font-size:.68rem;letter-spacing:.22em;text-transform:uppercase;color:var(--cinza);display:flex;justify-content:space-between;align-items:center}
@@ -835,8 +836,7 @@ const INSTAGRAM = {
   <section class="hero" id="inicio">
     <div class="wrap">
       <div>
-        <div class="eyebrow">Moda masculina premium • Sertânia-PE</div>
-        <h1>Elegância não precisa de esforço. Está nos <em>detalhes.</em></h1>
+        <h1><span class="eyebrow h1-local">Moda masculina premium em Sertânia-PE</span>Elegância não precisa de esforço. Está nos <em>detalhes.</em></h1>
         <p>Peças originais das marcas que você confia, escolhidas para o homem que se veste bem sem complicar. Na loja ou com envio para todo o Brasil.</p>
         <div class="acoes">
           <a href="#vitrine" class="btn cheio">Ver a vitrine</a>
@@ -1043,6 +1043,7 @@ const INSTAGRAM = {
         <div><div class="eyebrow">Visite</div><h2>Venha conhecer a loja</h2></div>
         <div><small>Endereço</small><span id="endereco"></span></div>
         <div><small>Horário</small><span id="horario"></span></div>
+        <div><small>WhatsApp</small><a id="telefone" class="js-zap" target="_blank" rel="noopener"></a></div>
         <div><small>Mapa</small><a href="https://www.google.com/maps/search/?api=1&query=-8.0764307%2C-37.2668626" target="_blank" rel="noopener" style="border-bottom:1px solid var(--areia)">Abrir no Google Maps</a></div>
         <div><small>Envios</small>Para todo o Brasil. Peça pelo WhatsApp.</div>
         <div><a class="btn cheio js-zap" target="_blank" rel="noopener">Chamar no WhatsApp</a></div>
@@ -1186,6 +1187,9 @@ const INSTAGRAM = {
   document.querySelectorAll('.js-insta').forEach(a => a.href = LOJA.instagram);
   $('endereco').textContent = LOJA.endereco;
   $('horario').textContent = LOJA.horario;
+  { const n = LOJA.whatsapp.replace(/\D/g, '').replace(/^55/, '');
+    if (/^\d{2}90{6,}$/.test(n)) $('telefone').parentElement.hidden = true; // número de exemplo: não mostra
+    else $('telefone').textContent = `(${n.slice(0, 2)}) ${n.slice(2, -4)}-${n.slice(-4)}`; }
   $('ano').textContent = new Date().getFullYear();
   if (LOJA.fotoCapa) { const h = document.querySelector('.hero'); h.style.setProperty('--hero-img', `url("${LOJA.fotoCapa}")`); h.classList.add('com-foto'); }
   if (LOJA.fotoSobre) $('fotoSobre').innerHTML = `<img src="${LOJA.fotoSobre}" alt="Loja DE men">`;
@@ -1206,7 +1210,7 @@ const INSTAGRAM = {
         <div class="foto" data-abrir="${p.id}">${seloHTML(p)}${foto(p.foto, p.nome, "Foto do produto")}${p.foto2 ? `<img class="foto2" src="${p.foto2}" alt="${p.nome} — outro ângulo" loading="lazy">` : ""}</div>
         <div class="info">
           <div class="marca">${p.marca}</div>
-          <h3 data-abrir="${p.id}">${p.nome}</h3>
+          <h3><a href="/produto/${p.id}.html" data-abrir="${p.id}">${p.nome}</a></h3>
           <div class="preco">${p.preco || "Consulte o preço"}</div>
           ${p.tam.length ? `<div class="tams">${p.tam.map(x => `<span>${x}</span>`).join('')}</div>` : '<div class="tams"></div>'}
           <div class="card-acoes"><a class="btn" target="_blank" rel="noopener"
@@ -1623,7 +1627,7 @@ const INSTAGRAM = {
         <div class="pp-info">
           <nav class="migalha" aria-label="Caminho"><button data-fechar>Início</button><span>/</span><button data-ir-cat="${esc(p.cat)}">${esc(p.cat)}</button><span>/</span><button data-ir-marca="${esc(p.marca)}">${esc(p.marca)}</button></nav>
           <div class="marca">${esc(p.marca)} • ${esc(p.sub || p.cat)}</div>
-          <div class="pp-titulo-linha"><h1>${esc(p.nome)}</h1><button class="btn-compartilhar" id="ppCompartilhar" aria-label="Compartilhar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/></svg></button></div>
+          <div class="pp-titulo-linha"><h2 class="pp-nome">${esc(p.nome)}</h2><button class="btn-compartilhar" id="ppCompartilhar" aria-label="Compartilhar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/></svg></button></div>
           <div class="preco">${esc(p.preco || 'Consulte o preço no WhatsApp')}</div>
           ${pagLinha()}
           <p class="desc">${esc(p.desc || descPadrao(p))}</p>

@@ -9,11 +9,12 @@ const slug = t => t.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().repla
 const site = 'https://demen-loja.github.io/';
 const out = {
   geradoEm: new Date().toISOString(),
-  loja: { nome: 'DE men', site, endereco: LOJA.endereco, horario: LOJA.horario, pagamento: LOJA.pagamento, pagamentos: LOJA.pagamentos,
+  loja: { nome: 'DE men', site, whatsapp: LOJA.whatsapp, fotoCapa: LOJA.fotoCapa, endereco: LOJA.endereco, horario: LOJA.horario, pagamento: LOJA.pagamento, pagamentos: LOJA.pagamentos,
           envio: LOJA.envio, trocas: LOJA.trocas, fretes: LOJA.fretes, instagram: LOJA.instagram, cupom: LOJA.cupom && LOJA.cupom.ativo ? LOJA.cupom : null },
   produtos: PRODUTOS.filter(p => p.foto).map(p => { const id = slug(p.marca + ' ' + p.nome);
     return { id, nome: p.nome, marca: p.marca, cat: p.cat, sub: p.sub || '', preco: p.preco || '', tam: p.tam || [], selo: p.selo || '', desc: p.desc || '',
-             foto: site + p.foto, link: site + '#p/' + id }; })
+             foto: site + p.foto, link: site + 'produto/' + id + '.html',
+             fotosRel: [p.foto, p.foto2, ...(p.fotos || [])].filter(Boolean).filter((f, i, a) => a.indexOf(f) === i) }; })
 };
 fs.writeFileSync(path.join(__dirname, 'produtos.json'), JSON.stringify(out, null, 1));
 console.log('produtos.json ok', out.produtos.length, 'produtos');

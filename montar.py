@@ -15,3 +15,4 @@ if not os.environ.get("SEM_CONTAS"):  # SEM_CONTAS=1 publica sem contas/SAC/aval
 print("index.html ok", len(s))
 subprocess.run([sys.executable, str(RAIZ / "gerar_teste.py")], check=True)
 subprocess.run(["node", str(RAIZ / "dados_bot.js")], check=True)  # lista de produtos para o robô do WhatsApp
+subprocess.run([sys.executable, str(RAIZ / "seo.py")], check=True)  # SEO: webp, páginas de produto, sitemap, robots (LIBERAR_GOOGLE=1 libera)
