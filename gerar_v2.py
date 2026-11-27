@@ -45,7 +45,7 @@ HERO = '''<section class="hero2" id="inicio">
         </ul>
       </div>
       <div class="hero2-mosaico" aria-hidden="true">
-        <figure class="m1"><img src="fotos/loja-camiseta-ck-branca.webp" alt=""></figure>
+        <figure class="m1"><video src="img/topo-modelo.mp4" poster="img/topo-modelo-capa.jpg" autoplay muted loop playsinline preload="metadata"></video></figure>
         <figure class="m2"><img src="fotos/loja-vitrine-jaqueta-verde.webp" alt=""></figure>
         <figure class="m3"><img src="fotos/adidas-samba-og-preto-v2.webp" alt=""></figure>
         <span class="hero2-selo">Peças<br>originais</span>
@@ -56,7 +56,7 @@ HERO = '''<section class="hero2" id="inicio">
     <span>Calvin Klein</span><i>✦</i><span>Reserva</span><i>✦</i><span>Adidas</span><i>✦</i><span>Ogochi</span><i>✦</i><span>Retire na loja</span><i>✦</i><span>Pix e cartão</span><i>✦</i>
     <span>Calvin Klein</span><i>✦</i><span>Reserva</span><i>✦</i><span>Adidas</span><i>✦</i><span>Ogochi</span><i>✦</i><span>Retire na loja</span><i>✦</i><span>Pix e cartão</span><i>✦</i>
   </div></div>'''
-HERO = HERO.replace('"fotos/', '"../fotos/')
+HERO = HERO.replace('"fotos/', '"../fotos/').replace('"img/', '"../img/')
 s = s[:inicio] + HERO + s[fim:]
 
 # o script que coloca a foto de capa procura .hero; aqui não existe
@@ -90,7 +90,9 @@ CSS = r"""
   .hero2-mosaico{position:relative;display:grid;grid-template-columns:1.25fr 1fr;grid-template-rows:1fr 1fr;gap:14px;height:min(78vh,680px)}
   .hero2-mosaico figure{overflow:hidden;background:var(--mini);margin:0}
   .hero2-mosaico .m1{grid-row:1 / 3}
-  .hero2-mosaico img{width:100%;height:100%;object-fit:cover;animation:zoomlento 18s ease-in-out infinite alternate}
+  .hero2-mosaico img,.hero2-mosaico video{width:100%;height:100%;object-fit:cover;display:block}
+  .hero2-mosaico video{object-position:50% 0%}
+  .hero2-mosaico img{animation:zoomlento 18s ease-in-out infinite alternate}
   .hero2-mosaico .m2 img{animation-delay:-6s}
   .hero2-mosaico .m3{background:#fff}
   .hero2-mosaico .m3 img{object-fit:contain;padding:12%;animation-delay:-12s}
