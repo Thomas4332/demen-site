@@ -64,7 +64,7 @@ troca("if (LOJA.fotoCapa) { const h = document.querySelector('.hero');",
       "if (LOJA.fotoCapa && document.querySelector('.hero')) { const h = document.querySelector('.hero');")
 
 # 5) rodapé com a marca grande
-troca('<footer>\n  <div class="wrap">', '<footer>\n  <div class="wrap rodape2-marca" aria-hidden="true">DE MEN</div>\n  <div class="wrap">')
+# (a marca grande do rodapé agora vem do fonte.html)
 
 CLARO = ("--preto:#f7f4ef; --grafite:#ffffff; --grafite2:#efeae2; --cinza:#6b655c; --linha:#e2dbd0;"
          "--branco:#161514; --areia:#836a3a; --texto2:#3b3833; --texto3:#514c45; --vidro:247,244,239; color:var(--branco);")
@@ -113,10 +113,6 @@ CSS = r"""
   .card .foto img{transition:transform .8s cubic-bezier(.2,.7,.2,1)}
   .card:hover .foto img{transform:scale(1.045)}
   .card h3{font-size:1.25rem}
-
-  /* Rodapé com a marca grande */
-  .rodape2-marca{font-family:var(--serif);font-weight:500;font-size:clamp(4.5rem,17vw,15rem);line-height:.85;letter-spacing:.04em;text-align:center;
-    color:transparent;-webkit-text-stroke:1px var(--linha);padding:2.5rem 0 1.5rem;user-select:none;display:block!important}
 
   @media (max-width:900px){
     .hero2{padding-top:calc(64px + 1.8rem)}
