@@ -27,7 +27,7 @@ troca("if (t !== 'claro' && t !== 'escuro') t = (window.matchMedia && matchMedia
       "if (t !== 'claro' && t !== 'escuro') t = 'claro';")
 
 # 4) topo novo: texto à esquerda, mosaico de fotos reais da loja à direita
-inicio = s.index('<section class="hero" id="inicio">')
+inicio = s.index('<section class="hero com-video" id="inicio">')
 fim = s.index("</section>", inicio) + len("</section>")
 HERO = '''<section class="hero2" id="inicio">
     <div class="wrap hero2-grade">
@@ -46,7 +46,7 @@ HERO = '''<section class="hero2" id="inicio">
       </div>
       <div class="hero2-mosaico" aria-hidden="true">
         <figure class="m1"><video src="img/topo-modelo.mp4" poster="img/topo-modelo-capa.jpg" autoplay muted loop playsinline preload="metadata"></video></figure>
-        <figure class="m2"><img src="fotos/loja-vitrine-jaqueta-verde.webp" alt=""></figure>
+        <figure class="m2"><video src="img/topo-jaqueta.mp4" poster="img/topo-jaqueta-capa.jpg" autoplay muted loop playsinline preload="metadata"></video></figure>
         <figure class="m3"><img src="fotos/adidas-samba-og-preto-v2.webp" alt=""></figure>
         <span class="hero2-selo">Peças<br>originais</span>
       </div>
@@ -91,7 +91,7 @@ CSS = r"""
   .hero2-mosaico figure{overflow:hidden;background:var(--mini);margin:0}
   .hero2-mosaico .m1{grid-row:1 / 3}
   .hero2-mosaico img,.hero2-mosaico video{width:100%;height:100%;object-fit:cover;display:block}
-  .hero2-mosaico video{object-position:50% 0%}
+  .hero2-mosaico .m1 video{object-position:50% 0%}
   .hero2-mosaico img{animation:zoomlento 18s ease-in-out infinite alternate}
   .hero2-mosaico .m2 img{animation-delay:-6s}
   .hero2-mosaico .m3{background:#fff}

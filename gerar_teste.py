@@ -94,8 +94,8 @@ troca("<body>\n", """<body>
 """)
 
 # 5) capa: partículas, brilho que segue o mouse e logo 3D
-troca('<section class="hero" id="inicio">\n    <div class="wrap">',
-      '<section class="hero" id="inicio">\n    <canvas id="particulas"></canvas><div class="brilho"></div>\n    <div class="wrap">')
+troca('<div class="hero-veu" aria-hidden="true"></div>\n    <div class="wrap">',
+      '<div class="hero-veu" aria-hidden="true"></div>\n    <canvas id="particulas"></canvas><div class="brilho"></div>\n    <div class="wrap">')
 troca('<img src="../img/logo.svg" alt="Logo DE men" class="hero-logo">',
       '<div class="hero-3d" id="hero3d"><img src="../img/logo.svg" alt="Logo DE men" class="hero-logo"><div class="legenda">DE&nbsp;MEN</div></div>')
 
