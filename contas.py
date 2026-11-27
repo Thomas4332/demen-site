@@ -109,7 +109,7 @@ troca("</style>\n</head>", r"""
   .faq summary::-webkit-details-marker{display:none}
   .faq summary::after{content:"+";position:absolute;right:.3rem;top:50%;transform:translateY(-50%);color:var(--areia);font-family:var(--sans);font-size:1.3rem;transition:transform .2s}
   .faq details[open] summary::after{transform:translateY(-50%) rotate(45deg)}
-  .faq details p{color:#bdb8b0;font-size:.92rem;padding:0 0 1.2rem;line-height:1.6}
+  .faq details p{color:var(--texto3);font-size:.92rem;padding:0 0 1.2rem;line-height:1.6}
   .canais{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1.6rem}
   .sac-caixa{background:var(--preto);border:1px solid var(--linha);padding:2rem}
   .sac-caixa h3{font-size:1.8rem;margin-bottom:.3rem}
@@ -124,7 +124,7 @@ troca("</style>\n</head>", r"""
   .status.resolvido{border-color:#3ccf6e;color:#3ccf6e}
   .status.andamento{border-color:var(--areia);color:var(--areia)}
   .chamado{padding:.9rem 0;border-bottom:1px solid var(--linha);font-size:.88rem}
-  .chamado .resp{margin-top:.5rem;padding:.6rem .8rem;border-left:2px solid var(--areia);color:#cfcac2;font-size:.85rem}
+  .chamado .resp{margin-top:.5rem;padding:.6rem .8rem;border-left:2px solid var(--areia);color:var(--texto2);font-size:.85rem}
 
   /* ================= AVALIAÇÕES ================= */
   .aval-pp{border-top:1px solid var(--linha);padding:2.6rem 0 0}
@@ -134,11 +134,11 @@ troca("</style>\n</head>", r"""
   .aval-resumo small{color:var(--cinza)}
   .aval-lista{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;margin-bottom:1.4rem}
   .aval-item{background:var(--grafite);padding:1.2rem 1.3rem;display:flex;flex-direction:column;gap:.5rem}
-  .aval-item p{font-size:.92rem;color:#d8d3cb;line-height:1.5}
+  .aval-item p{font-size:.92rem;color:var(--texto2);line-height:1.5}
   .aval-item small{color:var(--cinza);font-size:.75rem}
   .aval-item .pend{color:var(--areia);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase}
   .seletor-estrelas{display:flex;gap:.3rem}
-  .seletor-estrelas button{background:none;border:0;font-size:2rem;color:#444;cursor:pointer;padding:0 .1rem;line-height:1}
+  .seletor-estrelas button{background:none;border:0;font-size:2rem;color:var(--apagado);cursor:pointer;padding:0 .1rem;line-height:1}
   .seletor-estrelas button.on{color:var(--areia)}
   .estrelas-mini{font-size:.75rem}
   .card .nota-card{font-size:.72rem;color:var(--cinza);margin:-.2rem 0 .4rem}
@@ -584,7 +584,7 @@ if (sb) {
     if (!data.length) { box.innerHTML = '<p class="vazio-area">Você ainda não abriu nenhum atendimento.</p>'; return; }
     box.innerHTML = data.map(c => `<div class="chamado"><div style="display:flex;justify-content:space-between;gap:.6rem"><b>${esc(c.protocolo)}</b><span class="status ${c.status === 'resolvido' ? 'resolvido' : c.status === 'em andamento' ? 'andamento' : ''}">${esc(c.status)}</span></div>
       <small style="color:var(--cinza)">${esc(c.assunto)} • ${dataBR(c.criado_em)}</small>
-      <p style="margin-top:.4rem;color:#cfcac2">${esc(c.mensagem.slice(0, 160))}${c.mensagem.length > 160 ? '…' : ''}</p>${c.resposta ? `<div class="resp"><b style="color:var(--areia)">Resposta da loja:</b> ${esc(c.resposta)}</div>` : ''}</div>`).join('');
+      <p style="margin-top:.4rem;color:var(--texto2)">${esc(c.mensagem.slice(0, 160))}${c.mensagem.length > 160 ? '…' : ''}</p>${c.resposta ? `<div class="resp"><b style="color:var(--areia)">Resposta da loja:</b> ${esc(c.resposta)}</div>` : ''}</div>`).join('');
   }
 
   function marcaCoracoes() {
