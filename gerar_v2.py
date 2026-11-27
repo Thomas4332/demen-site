@@ -47,7 +47,7 @@ HERO = '''<section class="hero2" id="inicio">
       <div class="hero2-mosaico" aria-hidden="true">
         <figure class="m1"><video src="img/topo-modelo.mp4" poster="img/topo-modelo-capa.jpg" autoplay muted loop playsinline preload="metadata"></video></figure>
         <figure class="m2"><video src="img/topo-jaqueta.mp4" poster="img/topo-jaqueta-capa.jpg" autoplay muted loop playsinline preload="metadata"></video></figure>
-        <figure class="m3"><img src="fotos/adidas-samba-og-preto-v2.webp" alt=""></figure>
+        <figure class="m3"><video src="img/topo-samba.mp4" poster="img/topo-samba-capa.jpg" autoplay muted loop playsinline preload="metadata"></video></figure>
         <span class="hero2-selo">Peças<br>originais</span>
       </div>
     </div>
@@ -96,6 +96,7 @@ CSS = r"""
   .hero2-mosaico .m2 img{animation-delay:-6s}
   .hero2-mosaico .m3{background:#fff}
   .hero2-mosaico .m3 img{object-fit:contain;padding:12%;animation-delay:-12s}
+  .hero2-mosaico .m3 video{object-fit:cover}
   @keyframes zoomlento{from{transform:scale(1)}to{transform:scale(1.08)}}
   .hero2-selo{position:absolute;left:-46px;bottom:38px;width:112px;height:112px;border-radius:50%;background:var(--areia);color:#fff;display:grid;place-items:center;text-align:center;
     font-family:var(--serif);font-size:1.15rem;line-height:1.05;font-style:italic;box-shadow:0 12px 30px rgba(0,0,0,.18);animation:gira 24s linear infinite}
@@ -127,7 +128,7 @@ CSS = r"""
   }
 """.replace("__CLARO__", CLARO)
 
-troca("</style>", CSS + "\n</style>")
+troca("</style>", CSS + "\n  .movimento{display:none!important}\n</style>")
 
 # 6) contas/SAC/avaliações (mesmo módulo do site principal)
 PREFIXO = "../"
